@@ -1,0 +1,316 @@
+// Cube
+// Sizing: --w: width, --h: height, --d: depth
+// Position: --x: x-axis translation, --y: y-axis translation, --z: z-axis translation
+// Rotation: --rx: rotateX, --ry: rotateY, --rz: rotateZ
+.box {
+	--d2: calc(var(--d) / 2);
+	position: absolute;
+	width: var(--w);
+	height: var(--h);
+	transform: translate3d(var(--x), var(--y), var(--z)) rotatex(var(--rx))
+		rotatey(var(--ry)) rotatez(var(--rz));
+	div {
+		position: absolute;
+		// outline: 1px solid rgba(black, 1);
+	}
+	.lt {
+		width: var(--d);
+		height: var(--h);
+		left: 0;
+		transform: rotateY(-90deg) translatez(var(--d2));
+	}
+	.rt {
+		width: var(--d);
+		height: var(--h);
+		right: 0;
+		transform: rotateY(90deg) translatez(var(--d2));
+	}
+	.tp {
+		width: var(--w);
+		height: var(--d);
+		top: 0;
+		transform: rotateX(90deg) translateZ(var(--d2));
+	}
+	.bt {
+		width: var(--w);
+		height: var(--d);
+		bottom: 0;
+		transform: rotateX(-90deg) translateZ(var(--d2));
+	}
+	.ft {
+		width: var(--w);
+		height: var(--h);
+		transform: translateZ(var(--d2));
+	}
+	.bk {
+		width: var(--w);
+		height: var(--h);
+		transform: rotateY(180deg) translateZ(var(--d2));
+	}
+}
+
+@mixin color($col) {
+	// color the cubes from one hex
+	.ft {background: scale-color($col, $lightness: 10%)}
+	.tp {background: scale-color($col, $lightness: 34%)}
+	.lt {background: scale-color($col, $lightness: -12%)}
+	.bk {background: scale-color($col, $lightness: -32%)}
+	.rt {background: scale-color($col, $lightness: 17%)}
+	.bt {background: scale-color($col, $lightness: -26%)}
+}
+
+@mixin vars($w: 0, $h: 0, $d: 0, $x: 0, $y: 0, $z: 0, $rx: 0, $ry: 0, $rz: 0) {
+	--w: calc(#{$w} * 1vmin); // width
+	--h: calc(#{$h} * 1vmin); // height
+	--d: calc(#{$d} * 1vmin); // depth
+	--x: calc(#{$x} * 1vmin); // translate-x
+	--y: calc(#{$y} * 1vmin); // translate-y
+	--z: calc(#{$z} * 1vmin); // translate-z
+	--rx: calc(#{$rx} * 1deg); // rotate-x
+	--ry: calc(#{$ry} * 1deg); // rotate-y
+	--rz: calc(#{$rz} * 1deg); // rotate-z
+}
+
+// Setting up the scene
+:root {
+	--scene-width: 60vmin;
+	--scene-height: 20vmin;
+	--scene-depth: 60vmin;
+	--scene-scale: 1.3;
+}
+
+body {
+	display: grid;
+	place-items: center;
+	min-height: 100vh;
+	overflow: hidden;
+	perspective: 700px;
+	background: 
+		radial-gradient(white 0%, black 100%),
+		radial-gradient(#2CD8D5 0%, #C5C1FF 48%, #FFBAC3 100%);
+	background-blend-mode: soft-light;
+}
+
+.scene {
+	--rx: -20deg;
+	--ry: -20deg;
+	position: relative;
+	transform-style: preserve-3d;
+	width: var(--scene-width);
+	height: var(--scene-height);
+	cursor: grab;
+	transform: rotateX(var(--rx)) rotateY(var(--ry))
+		scale3d(var(--scene-scale), var(--scene-scale), var(--scene-scale));
+	* {
+		box-sizing: border-box;
+		transform-style: preserve-3d;
+	}
+	&:active {
+		cursor: grabbing;
+	}
+}
+
+// Tardigrade
+.tardigrade {
+	transform: translate3d(25vmin, 0vmin, 12vmin);
+	@include color(#9b3b6c);
+	.head {
+		width: 9vmin;
+		.head-large {
+			@include vars(9, 9, 8, 0, 0, 0);
+		}
+		.head-small {
+			@include vars(5, 5, 2, 2, 2, 5);
+			@include color(lighten(#9b3b6c, 2%));
+		}
+		.mouth-group {
+			transform: translate3d(3.75vmin, 3.75vmin, 6.5vmin);
+			.mouth {
+				@include vars(1.5, 0.5, 1.25, 0, 0, 0);
+				&:nth-child(1) {
+					--y: -0.5vmin;
+				}
+				&:nth-child(2) {
+					--x: 1vmin;
+					--rz: 60deg;
+				}
+				&:nth-child(3) {
+					--x: 1vmin;
+					--y: 1vmin;
+					--rz: 120deg;
+				}
+				&:nth-child(4) {
+					--y: 1.6vmin;
+				}
+				&:nth-child(5) {
+					--x: -1vmin;
+					--y: 1vmin;
+					--rz: 240deg;
+				}
+				&:nth-child(6) {
+					--x: -1vmin;
+					--rz: 300deg;
+				}
+			}
+		}
+	}
+	.body-segment {
+		transform: translate3d(-2.5vmin, -1.5vmin, -6vmin);
+		.chunk {
+			@include vars(14, 12, 8, 0, 0, 0, 0, 0, 0);
+		}
+		.chunk-small {
+			@include vars(13, 11, 4, 0.5, 0.5, -4, 0, 0, 0);
+		}
+		.leg {
+			@include vars(4, 7, 4, 0, 0, 0, 0, 0, 0);
+			@include color(lighten(#9b3b6c, 3%));
+		}
+		.toes {
+			width: 4vmin;
+			transform: translatey(6.75vmin) translatez(1.5vmin);
+		}
+		.toe {
+			@include vars(0.5, 2, 0.75, 0, 0, 0, 10, 0, 0);
+		}
+		.left-leg {
+			transform-origin: 50% 100% 50%;
+			transform: rotate(6deg) translate3d(1.5vmin, 10vmin, 0);
+			.toe {
+				@for $i from 1 through 4 {
+					&:nth-child(#{$i}) {
+						--x: calc((4.25vmin / 4) * (#{$i} - 1));
+						--rx: calc(20deg / 4 * #{$i});
+					}
+				}
+			}
+		}
+		.right-leg {
+			transform-origin: 50% 100% 50%;
+			transform: rotate(-6deg) translate3d(8.5vmin, 10vmin, 0);
+			.toe {
+				@for $i from 1 through 4 {
+					&:nth-child(#{$i}) {
+						--x: calc((4.25vmin / 4) * (#{$i} - 1));
+						--rx: calc(20deg / 4 * (4 - #{$i}));
+					}
+				}
+			}
+		}
+		&.ft {
+			--delay: 0s;
+		}
+		&.ft_mid {
+			--delay: 0s;
+			transform: translate3d(-2.5vmin, -1.5vmin, -15vmin);
+		}
+		&.bk_mid {
+			--delay: 0.25s;
+			transform: translate3d(-2.5vmin, -1.5vmin, -24vmin);
+		}
+		&.bk {
+			--delay: 0.25s;
+			transform: translate3d(-2.5vmin, -1.5vmin, -32vmin);
+			.chunk {
+				@include vars(14, 12, 6, 0, 0.5, 0, 0, 0, 0);
+			}
+		}
+	}
+}
+
+// Animating
+
+:root {
+	--ease: ease-in-out;
+	--dur: 2s;
+}
+
+.head {
+	animation: head-wiggle var(--dur) ease-in-out infinite alternate-reverse;
+}
+
+.leg-ani {
+	&.forward {
+		animation: swim var(--dur) var(--ease) var(--delay) infinite alternate;
+		.toes {
+			animation: swim-toes var(--dur) var(--ease) var(--delay) infinite alternate;
+		}
+	}
+	&.reverse {
+		animation: swim var(--dur) var(--ease) var(--delay) infinite alternate-reverse;
+		.toes {
+			animation: swim-toes var(--dur) var(--ease) var(--delay) infinite alternate-reverse;
+		}
+	}
+}
+
+.body-ani {
+	width: 14vmin;
+	&.forwards {
+		animation: body-wiggle var(--dur) var(--ease) var(--delay) infinite alternate;
+	}
+	&.reverse {
+		animation: body-wiggle var(--dur) var(--ease) var(--delay) infinite alternate-reverse;
+	}
+}
+
+.particle-1 {
+	@include vars(1,1,1,40,0,15);
+	@include color(#2CD8D5);
+}
+.particle-2 {
+	@include vars(1,1,1,30,-8,12);
+	@include color(#2CD8D5);
+}
+.particle-3 {
+	@include vars(1,1,1,20,-2,30);
+	@include color(#2CD8D5);
+}
+.particle {
+	animation: particle var(--dur) linear infinite;
+}
+
+@keyframes body-wiggle {
+	from {
+		transform: rotatey(-4deg);
+	}
+	to {
+		transform: rotatey(4deg);
+	}
+}
+
+@keyframes head-wiggle {
+	from {
+		transform: rotatey(-10deg)
+	}
+	to {
+		transform: rotatey(10deg)
+	}
+}
+
+@keyframes swim {
+	from {
+		transform: rotatex(20deg)
+	}
+	to {
+		transform: rotatex(-20deg)
+	}
+}
+
+@keyframes swim-toes {
+	from {
+		transform: translatey(6.75vmin) translatez(1.5vmin) rotatex(25deg);
+	}
+	to {
+		transform: translatey(6.75vmin) translatez(1.5vmin) rotatex(-25deg);
+	}
+}
+
+@keyframes particle {
+	0% {
+		transform: translatez(0px)
+	}
+	100% {
+		transform: translatez(-65vmin);
+	}
+}
